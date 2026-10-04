@@ -6,7 +6,10 @@ authors = [
     { name = "ghulam.mustafa", email = "ghulam.mustafa@decimal.co.in" }
 ]
 requires-python = ">=3.8"
-dependencies = []
+dependencies = [
+    "fastapi[standard]>=0.124.4",
+    "structlog>=25.5.0",
+]
 
 [project.scripts]
 pico = "pico:main"
