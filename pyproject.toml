@@ -12,6 +12,7 @@ dependencies = [
     "fastapi[standard]>=0.124.4",
     "langchain-community>=0.2.19",
     "langchain-core>=0.2.43",
+    "langchain-postgres>=0.0.10",
     "pydantic-settings>=2.8.1",
     "redis>=4,<5",
     "sqlalchemy>=2.0.54",

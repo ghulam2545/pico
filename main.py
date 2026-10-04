@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 # routers
 from api.health import router as health_router
+from api.workspaces import router as workspaces_router
 from pages.index import router as index_router
 #
 from config.settings import settings
@@ -46,6 +47,7 @@ app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 # API routes
 prefix = settings.api_prefix
 app.include_router(health_router, prefix=prefix)
+app.include_router(workspaces_router, prefix=prefix)
 app.include_router(index_router)
 
 if __name__ == "__main__":
