@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Environment variables
+.env
+
+# PyCharm
+.idea/
+
+# uv
+.uv/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
