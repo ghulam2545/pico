@@ -44,7 +44,8 @@ static_dir = Path(__file__).parent / "src" / "static"
 app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
 # API routes
-app.include_router(health_router)
+prefix = settings.api_prefix
+app.include_router(health_router, prefix=prefix)
 app.include_router(index_router)
 
 if __name__ == "__main__":

@@ -49,7 +49,7 @@ class Settings(BaseSettings):
 
     # App
     cors_origins: List[str] = ["http://localhost:8000"]
-    api_prefix: str = "/api/v1"
+    api_prefix: str = "/pico/api"
     secret_key: str = ""
 
     model_config = SettingsConfigDict(
