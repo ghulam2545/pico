@@ -1,7 +1,12 @@
 from pathlib import Path
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from pages import index as index_page
+from fastapi.middleware.cors import CORSMiddleware
+# routers
+from api.health import router as health_router
+from pages.index import router as index_router
+#
+from config.settings import settings
 from starlette.staticfiles import StaticFiles
 import uvicorn
 import structlog
@@ -25,12 +30,22 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # Serve static files
 static_dir = Path(__file__).parent / "src" / "static"
 app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
 # API routes
-app.include_router(index_page.router)
+app.include_router(health_router)
+app.include_router(index_router)
 
 if __name__ == "__main__":
     uvicorn.run(
