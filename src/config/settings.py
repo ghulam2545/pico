@@ -51,6 +51,8 @@ class Settings(BaseSettings):
     cors_origins: List[str] = ["http://localhost:8000"]
     api_prefix: str = "/pico/api"
     secret_key: str = ""
+    max_document_count: int = 30
+    max_conversation_count: int = 30
 
     model_config = SettingsConfigDict(
         env_file=".env",

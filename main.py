@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.health import router as health_router
 from api.workspaces import router as workspaces_router
 from pages.index import router as index_router
+from pages.workspace import router as workspace_router
 #
 from config.settings import settings
 from starlette.staticfiles import StaticFiles
@@ -49,6 +50,7 @@ prefix = settings.api_prefix
 app.include_router(health_router, prefix=prefix)
 app.include_router(workspaces_router, prefix=prefix)
 app.include_router(index_router)
+app.include_router(workspace_router, prefix=prefix)
 
 if __name__ == "__main__":
     uvicorn.run(
