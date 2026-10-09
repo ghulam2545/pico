@@ -3,13 +3,13 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 # routers
-from api.health import router as health_router
-from api.workspaces import router as workspaces_router
-from api.documents import router as documents_router
-from api.conversations import router as conversations_router
-from api.chat import router as chats_router
-from pages.index import router as index_router
-from pages.workspace import router as workspace_router
+from api.health import router as health
+from api.workspaces import router as workspaces
+from api.documents import router as documents
+from api.conversations import router as conversations
+from api.chat import router as chat
+from pages.index import router as index_page
+from pages.workspace import router as workspace_page
 #
 from config.settings import settings
 from starlette.staticfiles import StaticFiles
@@ -50,13 +50,13 @@ app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
 # API routes
 prefix = settings.api_prefix
-app.include_router(health_router, prefix=prefix)
-app.include_router(workspaces_router, prefix=prefix)
-app.include_router(documents_router, prefix=prefix)
-app.include_router(conversations_router, prefix=prefix)
-app.include_router(chats_router, prefix=prefix)
-app.include_router(index_router)
-app.include_router(workspace_router, prefix=prefix)
+app.include_router(health, prefix=prefix)
+app.include_router(workspaces, prefix=prefix)
+app.include_router(documents, prefix=prefix)
+app.include_router(conversations, prefix=prefix)
+app.include_router(chat, prefix=prefix)
+app.include_router(index_page)
+app.include_router(workspace_page, prefix=prefix)
 
 if __name__ == "__main__":
     uvicorn.run(
