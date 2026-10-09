@@ -6,6 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.health import router as health_router
 from api.workspaces import router as workspaces_router
 from api.documents import router as documents_router
+from api.conversations import router as conversations_router
+from api.chat import router as chats_router
 from pages.index import router as index_router
 from pages.workspace import router as workspace_router
 #
@@ -51,6 +53,8 @@ prefix = settings.api_prefix
 app.include_router(health_router, prefix=prefix)
 app.include_router(workspaces_router, prefix=prefix)
 app.include_router(documents_router, prefix=prefix)
+app.include_router(conversations_router, prefix=prefix)
+app.include_router(chats_router, prefix=prefix)
 app.include_router(index_router)
 app.include_router(workspace_router, prefix=prefix)
 
