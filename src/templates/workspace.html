@@ -12,7 +12,10 @@
 <body class="app">
 <header>
     <strong id="ws-name">Pico</strong>
-    <a href="#" id="logout">Log out</a>
+    <div class="right">
+        <span id="health"></span>
+        <button id="logout">Log out</button>
+    </div>
 </header>
 
 <div class="layout">
@@ -25,7 +28,8 @@
         <div id="messages"></div>
         <p id="msg" class="error"></p>
         <form id="chat-form">
-            <label for="query"></label><input id="query" placeholder="Ask about your documents..." autocomplete="off" required>
+            <label for="query"></label><input id="query" placeholder="Ask about your documents..." autocomplete="off"
+                                              required>
             <button id="send">Send</button>
         </form>
     </main>

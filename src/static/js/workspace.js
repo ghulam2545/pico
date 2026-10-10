@@ -2,6 +2,7 @@
 const USER_ID = "web";
 const IDENTIFIER = location.pathname.split("/").pop();
 const apiKey = localStorage.getItem(KEY);
+const SERVICES = {postgres: "Postgres", redis: "Redis", ollama_local: "Ollama local", ollama_cloud: "Ollama cloud"};
 let convoId = location.hash.slice(1);
 let busy = false;
 
@@ -29,6 +30,22 @@ async function call(path, options = {headers: headers()}) {
         throw new Error(typeof data.detail === "string" ? data.detail : `Error ${res.status}`);
     }
     return res;
+}
+
+// ---- health ----
+async function loadHealth() {
+    $("health").innerHTML = "";
+    try {
+        const data = await (await fetch(`${API}/health`)).json();
+        for (const [key, label] of Object.entries(SERVICES)) {
+            const span = document.createElement("span");
+            span.className = `hc ${data[key] === "up" ? "up" : "down"}`;
+            span.textContent = label;
+            span.title = data[key];
+            $("health").appendChild(span);
+        }
+    } catch (err) { /* ignore */
+    }
 }
 
 // ---- rendering ----
@@ -89,8 +106,8 @@ async function init() {
         const all = await (await call("/workspaces")).json();
         const ws = all.find((w) => w.identifier === IDENTIFIER);
         if (ws) {
-            $("ws-name").textContent = `Pico · ws.name`;
-            document.title = `${ws.name} · Pico`;
+            $("ws-name").textContent = `Pico · ${ws.name}`;
+            document.title = `Pico · ${ws.name}`;
         }
         await Promise.all([loadConvos(), loadDocs()]);
     } catch (err) {
@@ -238,4 +255,6 @@ $("logout").onclick = (e) => {
     logout();
 };
 
+loadHealth();
+setInterval(loadHealth, 150000);
 init();
