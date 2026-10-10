@@ -1,9 +1,19 @@
-// uses $ and API from app.js, PICO from the template
+// uses $, API, KEY from app.js
 const USER_ID = "web";
+const IDENTIFIER = location.pathname.split("/").pop();
+const apiKey = localStorage.getItem(KEY);
 let convoId = location.hash.slice(1);
 let busy = false;
 
-const headers = (extra = {}) => ({"X-API-Key": PICO.key, ...extra});
+function logout(reason) {
+    localStorage.removeItem(KEY);
+    if (reason) sessionStorage.setItem("pico_msg", reason);
+    location.href = "/";
+}
+
+if (!apiKey) logout();
+
+const headers = (extra = {}) => ({"X-API-Key": apiKey, ...extra});
 const json = (method, body) => ({
     method, headers: headers({"Content-Type": "application/json"}), body: JSON.stringify(body),
 });
@@ -11,13 +21,35 @@ const fail = (text) => {
     $("msg").textContent = text;
 };
 
-async function call(path, options) {
-    const res = await fetch(`${PICO.api}${path}`, options);
+async function call(path, options = {headers: headers()}) {
+    const res = await fetch(`${API}${path}`, options);
+    if (res.status === 401) logout("Invalid API key for this workspace.");
     if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(typeof data.detail === "string" ? data.detail : `Error ${res.status}`);
     }
     return res;
+}
+
+// ---- rendering ----
+function addItem(list, id, label, sub) {
+    const li = document.createElement("li");
+    li.dataset.id = id;
+    const name = document.createElement("span");
+    name.className = "name";
+    name.textContent = label;
+    if (sub) {
+        const small = document.createElement("small");
+        small.textContent = sub;
+        name.appendChild(small);
+    }
+    const del = document.createElement("button");
+    del.className = "del";
+    del.title = "Delete";
+    del.textContent = "×";
+    li.append(name, del);
+    list.appendChild(li);
+    return li;
 }
 
 function addMessage(text, cls) {
@@ -30,11 +62,43 @@ function addMessage(text, cls) {
 }
 
 function markActive() {
-    document.querySelectorAll("#convos li[data-id]").forEach((li) => {
+    document.querySelectorAll("#convos li").forEach((li) => {
         li.classList.toggle("active", li.dataset.id === convoId);
     });
 }
 
+async function loadConvos() {
+    const convos = await (await call(`/conversations?user_id=${USER_ID}`)).json();
+    $("convos").innerHTML = "";
+    convos.forEach((c) => addItem($("convos"), c.id, c.name));
+    markActive();
+}
+
+async function loadDocs() {
+    const data = await (await call("/documents?size=100")).json();
+    $("docs").innerHTML = "";
+    $("doc-filter").length = 1;
+    data.files.forEach((d) => {
+        addItem($("docs"), d.id, d.filename, `${d.chunk_count} chunks`);
+        $("doc-filter").add(new Option(d.filename, d.filename));
+    });
+}
+
+async function init() {
+    try {
+        const all = await (await call("/workspaces")).json();
+        const ws = all.find((w) => w.identifier === IDENTIFIER);
+        if (ws) {
+            $("ws-name").textContent = `Pico · ws.name`;
+            document.title = `${ws.name} · Pico`;
+        }
+        await Promise.all([loadConvos(), loadDocs()]);
+    } catch (err) {
+        fail(err.message);
+    }
+}
+
+// ---- conversations ----
 function openConvo(id) {
     convoId = id;
     location.hash = id;
@@ -42,28 +106,26 @@ function openConvo(id) {
     markActive();
 }
 
-async function newConvo() {
-    const res = await call("/conversations", json("POST", {user_id: USER_ID}));
-    const c = await res.json();
-    location.hash = c.id;
-    location.reload();
-}
-
-// ---- conversations ----
-$("new-convo").onclick = () => newConvo().catch((e) => fail(e.message));
+$("new-convo").onclick = async () => {
+    try {
+        const c = await (await call("/conversations", json("POST", {user_id: USER_ID}))).json();
+        await loadConvos();
+        openConvo(c.id);
+    } catch (err) {
+        fail(err.message);
+    }
+};
 
 $("convos").onclick = async (e) => {
-    const li = e.target.closest("li[data-id]");
+    const li = e.target.closest("li");
     if (!li) return;
-    if (e.target.classList.contains("del")) {
-        await call(`/conversations/${li.dataset.id}`, {
-            method: "DELETE",
-            headers: headers()
-        }).catch((e) => fail(e.message));
-        if (li.dataset.id === convoId) location.hash = "";
-        location.reload();
-    } else {
-        openConvo(li.dataset.id);
+    if (!e.target.classList.contains("del")) return openConvo(li.dataset.id);
+    try {
+        await call(`/conversations/${li.dataset.id}`, {method: "DELETE", headers: headers()});
+        if (li.dataset.id === convoId) openConvo("");
+        await loadConvos();
+    } catch (err) {
+        fail(err.message);
     }
 };
 
@@ -76,38 +138,36 @@ $("upload-form").onsubmit = async (e) => {
     const btn = e.target.querySelector("button");
     btn.disabled = true;
     btn.textContent = "Uploading...";
+    fail("");
     try {
         await call("/ingest/upload", {method: "POST", headers: headers(), body: form});
-        location.reload();
+        e.target.reset();
+        await loadDocs();
     } catch (err) {
         fail(err.message);
-        btn.disabled = false;
-        btn.textContent = "Upload";
     }
+    btn.disabled = false;
+    btn.textContent = "Upload";
 };
 
 $("docs").onclick = async (e) => {
-    const li = e.target.closest("li[data-id]");
+    const li = e.target.closest("li");
     if (!li || !e.target.classList.contains("del")) return;
-    await call(`/documents/${li.dataset.id}`, {method: "DELETE", headers: headers()}).catch((e) => fail(e.message));
-    location.reload();
+    try {
+        await call(`/documents/${li.dataset.id}`, {method: "DELETE", headers: headers()});
+        await loadDocs();
+    } catch (err) {
+        fail(err.message);
+    }
 };
 
 // ---- chat ----
 async function ensureConvo(title) {
     if (convoId) return;
-    const res = await call("/conversations", json("POST", {user_id: USER_ID, name: title.slice(0, 40)}));
-    const c = await res.json();
+    const c = await (await call("/conversations", json("POST", {user_id: USER_ID, name: title.slice(0, 40)}))).json();
     convoId = c.id;
     location.hash = c.id;
-    const li = document.createElement("li");
-    li.dataset.id = c.id;
-    li.innerHTML = '<span class="name"></span><button class="del" title="Delete">&times;</button>';
-    li.querySelector(".name").textContent = c.name;
-    const list = $("convos");
-    list.querySelector("li:not([data-id])")?.remove();
-    list.prepend(li);
-    markActive();
+    await loadConvos();
 }
 
 // SSE: "data: {token}" ... "data: [SOURCES][...]" ... "data: [DONE]"
@@ -119,6 +179,8 @@ async function streamAnswer(query, bubble) {
     const res = await call("/chat", json("POST", body));
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
+    const text = document.createTextNode("");
+    bubble.prepend(text);
     let buffer = "";
 
     while (true) {
@@ -142,7 +204,7 @@ async function streamAnswer(query, bubble) {
             }
             const msg = JSON.parse(data);
             if (msg.error) throw new Error(msg.error);
-            bubble.firstChild.textContent += msg.token;
+            text.data += msg.token;
             $("messages").scrollTop = $("messages").scrollHeight;
         }
     }
@@ -159,7 +221,6 @@ $("chat-form").onsubmit = async (e) => {
     fail("");
     addMessage(query, "user");
     const bubble = addMessage("", "bot");
-    bubble.prepend(document.createTextNode(""));
 
     try {
         await ensureConvo(query);
@@ -172,10 +233,9 @@ $("chat-form").onsubmit = async (e) => {
     $("query").focus();
 };
 
-markActive();
-
 $("logout").onclick = (e) => {
     e.preventDefault();
-    document.cookie = "pico_api_key=; path=/; max-age=0";
-    location.href = "/";
+    logout();
 };
+
+init();

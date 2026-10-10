@@ -1,15 +1,15 @@
 const $ = (name) => document.getElementById(name);
 const API = "/pico/api";
-
-function setCookie(key) {
-    document.cookie = `pico_api_key=${encodeURIComponent(key)}; path=/; max-age=2592000; SameSite=Lax`;
-}
+const KEY = "pico_api_key";
 
 // ---- landing page ----
 if ($("enter-form")) {
+    $("msg").textContent = sessionStorage.getItem("pico_msg") || "";
+    sessionStorage.removeItem("pico_msg");
+
     $("enter-form").onsubmit = (e) => {
         e.preventDefault();
-        setCookie($("enter-key").value.trim());
+        localStorage.setItem(KEY, $("enter-key").value.trim());
         location.href = `/ws/${$("enter-identifier").value.trim()}`;
     };
 
@@ -26,7 +26,7 @@ if ($("enter-form")) {
             $("msg").textContent = typeof data.detail === "string" ? data.detail : "Invalid input";
             return;
         }
-        setCookie(data.api_key);
+        localStorage.setItem(KEY, data.api_key);
         $("created-key").textContent = data.api_key;
         $("created-link").href = `/ws/${data.identifier}`;
         $("created").hidden = false;

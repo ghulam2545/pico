@@ -1,8 +1,15 @@
-{% extends "base.html" %}
-{% block title %}Pico{% endblock %}
-{% block body_class %}center{% endblock %}
-
-{% block content %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pico</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="center">
 <main class="card">
     <h1>Pico</h1>
     <p class="muted">Chat with your documents.</p>
@@ -10,7 +17,7 @@
     <h2>Open workspace</h2>
     <form id="enter-form">
         <input id="enter-identifier" placeholder="Identifier" required value="name000">
-        <input id="enter-key" type="password" placeholder="API key" required value="5e69de8c1050360911d1fed7300f4951b48873e08f4c777f57353911ef8bc285">
+        <input id="enter-key" type="password" placeholder="API key" required value="7fb8d94bdc054165b4a290f330e5e14ab73ce12c76ee39b1a67dc3a8c8634fb8">
         <button>Open</button>
     </form>
 
@@ -28,4 +35,6 @@
         <p><a id="created-link" href="#">Open workspace &rarr;</a></p>
     </div>
 </main>
-{% endblock %}
+<script src="/static/js/app.js"></script>
+</body>
+</html>
