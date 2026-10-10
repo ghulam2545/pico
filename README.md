@@ -126,7 +126,6 @@ psql -h localhost -U postgres -d pico -c "CREATE EXTENSION IF NOT EXISTS vector;
 The current application code does not create its relational tables automatically at startup. Once `.env` is configured, create the tables defined by the SQLAlchemy models:
 
 ```bash
-PYTHONPATH=src uv run --no-sync python - <<'PY'
 import asyncio
 from db.session import get_engine
 from models.db import Base
@@ -138,7 +137,6 @@ async def main():
     await engine.dispose()
 
 asyncio.run(main())
-PY
 ```
 
 The pgvector extension must be installed on the PostgreSQL server before this step. The vector-store tables are managed by LangChain's PGVector integration.
