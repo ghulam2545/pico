@@ -43,6 +43,16 @@ class Settings(BaseSettings):
     llm_model: str = ""
     llm_temperature: float = 0.1
 
+    # Retrieval
+    top_k_dense: int = 15
+    top_k_final: int = 6
+    rrf_k: int = 50
+
+    # Chunking
+    chunk_size: int = 1000
+    chunk_overlap: int = 200
+    min_chunk_length: int = 50
+
     # Memory
     redis_ttl_hours: int = 24
     redis_max_messages: int = 20

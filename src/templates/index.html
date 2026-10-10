@@ -1,3 +1,31 @@
-<link rel="stylesheet" href="/static/css/styles.css">
-<span id="text">hello world!</span>
-<script src="/static/js/app.js"></script>
+{% extends "base.html" %}
+{% block title %}Pico{% endblock %}
+{% block body_class %}center{% endblock %}
+
+{% block content %}
+<main class="card">
+    <h1>Pico</h1>
+    <p class="muted">Chat with your documents.</p>
+
+    <h2>Open workspace</h2>
+    <form id="enter-form">
+        <input id="enter-identifier" placeholder="Identifier" required value="name000">
+        <input id="enter-key" type="password" placeholder="API key" required value="5e69de8c1050360911d1fed7300f4951b48873e08f4c777f57353911ef8bc285">
+        <button>Open</button>
+    </form>
+
+    <h2>New workspace</h2>
+    <form id="create-form">
+        <input id="create-name" placeholder="Name" required>
+        <input id="create-identifier" placeholder="identifier (a-z, 0-9, -)" pattern="[a-z0-9\-]+" required>
+        <button>Create</button>
+    </form>
+
+    <p id="msg" class="error"></p>
+    <div id="created" hidden>
+        <p>Save this API key, it is shown only once:</p>
+        <code id="created-key"></code>
+        <p><a id="created-link" href="#">Open workspace &rarr;</a></p>
+    </div>
+</main>
+{% endblock %}

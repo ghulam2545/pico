@@ -8,6 +8,7 @@ from api.workspaces import router as workspaces
 from api.documents import router as documents
 from api.conversations import router as conversations
 from api.chat import router as chat
+from api.ingest import router as ingest
 from pages.index import router as index_page
 from pages.workspace import router as workspace_page
 #
@@ -54,9 +55,10 @@ app.include_router(health, prefix=prefix)
 app.include_router(workspaces, prefix=prefix)
 app.include_router(documents, prefix=prefix)
 app.include_router(conversations, prefix=prefix)
+app.include_router(ingest, prefix=prefix)
 app.include_router(chat, prefix=prefix)
 app.include_router(index_page)
-app.include_router(workspace_page, prefix=prefix)
+app.include_router(workspace_page)
 
 if __name__ == "__main__":
     uvicorn.run(

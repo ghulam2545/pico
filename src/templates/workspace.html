@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}{{ workspace.name }} · Pico{% endblock %}
+{% block body_class %}app{% endblock %}
+
+{% block content %}
+<header>
+    <strong>{{ workspace.name }}</strong>
+    <a href="#" id="logout">Log out</a>
+</header>
+
+<div class="layout">
+    <aside>
+        <button id="new-convo" class="full">+ New chat</button>
+        <ul id="convos">
+            {% for c in conversations %}
+            <li data-id="{{ c.id }}">
+                <span class="name">{{ c.name }}</span>
+                <button class="del" title="Delete">&times;</button>
+            </li>
+            {% else %}
+            <li class="muted">No chats yet</li>
+            {% endfor %}
+        </ul>
+    </aside>
+
+    <main>
+        <div id="messages"></div>
+        <p id="msg" class="error"></p>
+        <form id="chat-form">
+            <input id="query" placeholder="Ask about your documents..." autocomplete="off" required>
+            <button id="send">Send</button>
+        </form>
+    </main>
+
+    <aside>
+        <form id="upload-form">
+            <input type="file" id="file" accept=".pdf,.docx,.md,.txt" required>
+            <button class="full">Upload</button>
+        </form>
+        <select id="doc-filter">
+            <option value="">All documents</option>
+            {% for d in documents %}
+            <option value="{{ d.filename }}">{{ d.filename }}</option>
+            {% endfor %}
+        </select>
+        <ul id="docs">
+            {% for d in documents %}
+            <li data-id="{{ d.id }}">
+                <span class="name">{{ d.filename }}<small>{{ d.chunk_count }} chunks</small></span>
+                <button class="del" title="Delete">&times;</button>
+            </li>
+            {% else %}
+            <li class="muted">No documents yet</li>
+            {% endfor %}
+        </ul>
+    </aside>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const PICO = {
+        api: {{ api_prefix|tojson }},
+        key: {{ api_key|tojson }},
+        identifier: {{ workspace.identifier|tojson }},
+    };
+</script>
+<script src="/static/js/workspace.js"></script>
+{% endblock %}

@@ -5,6 +5,9 @@ from typing import List
 
 from langchain_core.documents import Document
 from langchain_postgres import PGVector
+from config.settings import settings
+from core.embeddings import embeddings
+from core.retriever import COLLECTION_NAME
 import structlog
 
 log = structlog.get_logger()
@@ -12,7 +15,12 @@ BATCH_SIZE = 60
 
 
 def _get_store() -> PGVector:
-    pass # TODO
+    return PGVector(
+        embeddings=embeddings,
+        collection_name=COLLECTION_NAME,
+        connection=settings.postgres_url_sync,
+        use_jsonb=True,
+    )
 
 
 class VectorStoreService:

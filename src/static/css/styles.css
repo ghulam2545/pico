@@ -1,5 +1,240 @@
-#text {
-    padding: 5px;
-    border: 1px solid black;
-    font-size: 2em;
+:root {
+    --bg: #f7f7f8;
+    --panel: #fff;
+    --border: #e4e4e7;
+    --text: #18181b;
+    --muted: #71717a;
+    --accent: #000000;
+    --danger: #dc2626;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+    background: var(--bg);
+}
+
+h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+h2 {
+    margin: 24px 0 8px;
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+code {
+    display: block;
+    padding: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    word-break: break-all;
+}
+
+input, select, button {
+    font: inherit;
+}
+
+input, select {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--panel);
+}
+
+button {
+    padding: 8px 14px;
+    border: 0;
+    border-radius: 6px;
+    background: var(--accent);
+    color: #fff;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: .5;
+    cursor: default;
+}
+
+button.full {
+    width: 100%;
+}
+
+button.del {
+    padding: 0 6px;
+    background: none;
+    color: var(--muted);
+    font-size: 18px;
+}
+
+button.del:hover {
+    color: var(--danger);
+}
+
+.muted {
+    color: var(--muted);
+}
+
+.error {
+    color: var(--danger);
+    min-height: 1.5em;
+}
+
+/* landing */
+body.center {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+}
+
+.card {
+    width: 360px;
+    padding: 28px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+/* workspace */
+body.app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+}
+
+.layout {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 240px 1fr 280px;
+    min-height: 0;
+}
+
+aside {
+    padding: 12px;
+    background: var(--panel);
+    overflow-y: auto;
+}
+
+aside:first-child {
+    border-right: 1px solid var(--border);
+}
+
+aside:last-child {
+    border-left: 1px solid var(--border);
+}
+
+ul {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+li:hover {
+    background: var(--bg);
+}
+
+li.active {
+    background: #dbeafe;
+}
+
+li .name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+li small {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 12px 20px;
+}
+
+#messages {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.msg {
+    max-width: 80%;
+    margin: 8px 0;
+    padding: 8px 12px;
+    border-radius: 10px;
+    white-space: pre-wrap;
+    background: var(--panel);
+    border: 1px solid var(--border);
+}
+
+.msg.user {
+    margin-left: auto;
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+}
+
+.msg small {
+    display: block;
+    margin-top: 6px;
+    color: var(--muted);
+}
+
+#chat-form {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+#chat-form input {
+    margin: 0;
+}
+
+@media (max-width: 800px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    aside {
+        display: none;
+    }
 }
