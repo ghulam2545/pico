@@ -58,7 +58,7 @@ async def _check_ollama_cloud() -> str:
     try:
         async with httpx.AsyncClient(timeout=5) as client:
             r = await client.get(
-                settings.ollama_cloud_url.rstrip("/v1") + "/v1/models",
+                settings.ollama_cloud_url.rstrip("/") + "/models",
                 headers={"Authorization": f"Bearer {settings.ollama_api_key}"},
             )
             return "up" if r.status_code in (200, 401) else f"down: HTTP {r.status_code}"

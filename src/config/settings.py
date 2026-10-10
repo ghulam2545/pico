@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     embed_model: str = "nomic-embed-text"
 
     # Ollama Cloud / Remote (LLM) - OpenAI-compatible endpoint
-    ollama_cloud_url: str = "https://api.ollama.com/v1"
+    ollama_cloud_url: str = "https://ollama.com/v1"
     ollama_api_key: str = ""
     llm_model: str = ""
     llm_temperature: float = 0.1
