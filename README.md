@@ -125,7 +125,7 @@ psql -h localhost -U postgres -d pico -c "CREATE EXTENSION IF NOT EXISTS vector;
 
 The current application code does not create its relational tables automatically at startup. Once `.env` is configured, create the tables defined by the SQLAlchemy models:
 
-```bash
+```python
 import asyncio
 from db.session import get_engine
 from models.db import Base
