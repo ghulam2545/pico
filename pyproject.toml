@@ -17,6 +17,7 @@ dependencies = [
     "langchain-postgres>=0.0.10",
     "psycopg2>=2.9.10",
     "pydantic-settings>=2.8.1",
+    "pymupdf>=1.24.11",
     "rank-bm25>=0.2.2",
     "redis>=4,<5",
     "sqlalchemy>=2.0.54",

@@ -7,6 +7,7 @@ All return List[Document] with page_content and metadata.
 from pathlib import Path
 from typing import List, Tuple
 import io
+import pymupdf
 import structlog
 
 from langchain_core.documents import Document
@@ -60,22 +61,19 @@ def _load_text(file_bytes: bytes, filename: str, file_type: str, base_metadata: 
 
 
 def _load_pdf(file_bytes: bytes, filename: str, base_metadata: dict) -> List[Document]:
-    """Load PDF page by page using PyMuPDF (fitz)."""
-    import fitz  # pymupdf
-
+    """Load PDF page by page using PyMuPDF."""
     docs = []
-    pdf = fitz.open(stream=file_bytes, filetype="pdf")
-    total_pages = len(pdf)
+    with pymupdf.open(stream=file_bytes, filetype="pdf") as pdf:
+        total_pages = len(pdf)
 
-    for page_num in range(total_pages):
-        page = pdf[page_num]
+    for page_num, page in enumerate(pdf, start=1):
         text = page.get_text("text")
         if text and text.strip():
             meta = {
                 **base_metadata,
                 "filename": filename,
                 "file_type": "pdf",
-                "page": page_num + 1,
+                "page": page_num,
                 "total_pages": total_pages,
             }
             docs.append(Document(page_content=text, metadata=meta))
