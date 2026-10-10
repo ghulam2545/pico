@@ -78,7 +78,7 @@ OLLAMA_LOCAL_URL=http://localhost:11434
 EMBED_MODEL=nomic-embed-text
 
 # Ollama Cloud chat model
-OLLAMA_CLOUD_URL=https://api.ollama.com/v1
+OLLAMA_CLOUD_URL=https://ollama.com/v1
 OLLAMA_API_KEY=your-ollama-api-key
 LLM_MODEL=your-cloud-model
 LLM_TEMPERATURE=0.1
